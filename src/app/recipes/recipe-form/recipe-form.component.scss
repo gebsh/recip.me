@@ -1,0 +1,59 @@
+form {
+  padding: 16px 0;
+}
+
+mat-form-field {
+  width: 100%;
+
+  + mat-form-field {
+    margin-top: 16px;
+  }
+}
+
+section + section {
+  margin-top: 32px;
+}
+
+header {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-bottom: 8px;
+
+  > h3 {
+    margin: 0;
+  }
+
+  > .fill {
+    flex: 1 1 auto;
+  }
+}
+
+.ingredient-row {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  column-gap: 8px;
+
+  + .ingredient-row {
+    margin-top: 16px;
+  }
+
+  > mat-form-field {
+    flex-grow: 1;
+
+    + mat-form-field {
+      margin-top: 0;
+    }
+  }
+
+  > .delete {
+    margin-bottom: 16px;
+  }
+}
+
+.ingredients-error {
+  margin-top: 16px;
+}

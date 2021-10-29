@@ -9,11 +9,17 @@
   </p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="false" [disabled]="processing">
+  <button
+    mat-button
+    type="button"
+    [mat-dialog-close]="false"
+    [disabled]="processing"
+  >
     Cancel
   </button>
   <button
     mat-button
+    type="button"
     color="warn"
     cdkFocusInitial
     [disabled]="processing"

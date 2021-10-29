@@ -2,7 +2,7 @@
   <div class="search">
     <mat-form-field class="search-input" appearance="fill">
       <mat-label>Search recipes</mat-label>
-      <input matInput type="search" [formControl]="filter" />
+      <input matInput type="search" inputmode="search" [formControl]="filter" />
     </mat-form-field>
   </div>
 
@@ -16,6 +16,7 @@
       <button
         mat-icon-button
         appStopRipplePropagation
+        type="button"
         (click)="editRecipe($event, recipe._id)"
       >
         <mat-icon>edit</mat-icon>
@@ -23,6 +24,7 @@
       <button
         mat-icon-button
         appStopRipplePropagation
+        type="button"
         (click)="deleteRecipe($event, recipe._id, recipe.name)"
       >
         <mat-icon>delete</mat-icon>

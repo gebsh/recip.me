@@ -1,1 +1,23 @@
-<p>recipe-create works!</p>
+<mat-card>
+  <mat-card-title>Create a recipe</mat-card-title>
+  <mat-card-content>
+    <app-recipe-form
+      formId="edit-form"
+      (submitRecipe)="create($event)"
+    ></app-recipe-form>
+
+    <p *ngIf="processError" class="error">
+      An error occurred while saving the recipe:<br />{{ processError }}
+    </p>
+  </mat-card-content>
+  <mat-divider></mat-divider>
+  <mat-card-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button mat-button form="edit-form" color="primary" type="submit">
+      Create
+    </button>
+  </mat-card-actions>
+  <mat-card-footer *ngIf="processing">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </mat-card-footer>
+</mat-card>

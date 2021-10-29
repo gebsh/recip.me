@@ -1,1 +1,38 @@
-<p>recipe-edit works!</p>
+<mat-card>
+  <mat-card-title>Edit a recipe</mat-card-title>
+  <ng-container *ngIf="recipe$ | async as recipe; else loadingOrError">
+    <mat-card-content>
+      <app-recipe-form
+        formId="edit-form"
+        [recipe]="recipe"
+        (submitRecipe)="save($event, recipe._id)"
+      ></app-recipe-form>
+
+      <p *ngIf="processError" class="error">
+        An error occurred while saving the recipe:<br />{{ processError }}
+      </p>
+    </mat-card-content>
+    <mat-divider></mat-divider>
+    <mat-card-actions align="end">
+      <button mat-button type="button" (click)="cancel()">Cancel</button>
+      <button mat-button form="edit-form" color="primary" type="submit">
+        Save
+      </button>
+    </mat-card-actions>
+  </ng-container>
+  <ng-template #loadingOrError>
+    <ng-container *ngIf="fetchError; else loading">
+      <mat-card-content>
+        <p *ngIf="fetchError" class="error">
+          An error occurred while loading the recipe:<br />{{ fetchError }}
+        </p>
+      </mat-card-content>
+    </ng-container>
+    <ng-template #loading>
+      <mat-card-content>Loading the recipe...</mat-card-content>
+    </ng-template>
+  </ng-template>
+  <mat-card-footer *ngIf="processing">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </mat-card-footer>
+</mat-card>

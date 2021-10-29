@@ -1,8 +1,13 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, filter, map, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import {
   RecipeDeleteDialogComponent,
   RecipeDeleteDialogData,
@@ -18,9 +23,11 @@ import { RecipeService } from '../recipe.service';
 })
 export class RecipeDetailsComponent implements OnInit {
   public recipe$?: Observable<Recipe>;
-  public error?: string;
+  public processing: boolean = false;
+  public fetchError?: string;
 
   constructor(
+    private readonly _cd: ChangeDetectorRef,
     private readonly _router: Router,
     private readonly _route: ActivatedRoute,
     private readonly _dialog: MatDialog,
@@ -31,13 +38,29 @@ export class RecipeDetailsComponent implements OnInit {
     this.recipe$ = this._route.paramMap.pipe(
       map((params) => params.get('id')),
       filter((id): id is string => typeof id === 'string'),
+      tap(() => {
+        this.processing = true;
+        this.fetchError = undefined;
+
+        this._cd.markForCheck();
+      }),
       switchMap((id) => this._recipeService.getRecipe(id)),
+      tap(() => {
+        this.processing = false;
+      }),
       catchError((error) => {
-        this.error = String(error);
+        this.processing = false;
+        this.fetchError = String(error);
 
         return EMPTY;
       }),
     );
+  }
+
+  public editRecipe(event: MouseEvent, id: string): void {
+    event.stopPropagation();
+
+    this._router.navigate(['../../edit', id], { relativeTo: this._route });
   }
 
   public deleteRecipe(event: MouseEvent, id: string, name: string): void {

@@ -34,26 +34,33 @@
     </mat-card-content>
     <mat-divider></mat-divider>
     <mat-card-actions align="end">
-      <a mat-button [routerLink]="['../../edit', recipe._id]">Edit</a>
       <button
-        mat-button
+        mat-icon-button
+        type="button"
+        (click)="editRecipe($event, recipe._id)"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
         (click)="deleteRecipe($event, recipe._id, recipe.name)"
       >
-        Delete
+        <mat-icon>delete</mat-icon>
       </button>
     </mat-card-actions>
   </ng-container>
   <ng-template #loadingOrError>
-    <ng-container *ngIf="error; else loading">
+    <ng-container *ngIf="fetchError; else loading">
       <mat-card-content class="error">
-        <p>An error occurred while fetching the recipe:<br />{{ error }}</p>
+        <p>An error occurred while loading the recipe:<br />{{ fetchError }}</p>
       </mat-card-content>
     </ng-container>
     <ng-template #loading>
       <mat-card-content>Loading recipe details...</mat-card-content>
-      <mat-card-footer>
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      </mat-card-footer>
     </ng-template>
   </ng-template>
+  <mat-card-footer *ngIf="processing">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </mat-card-footer>
 </mat-card>

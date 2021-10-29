@@ -19,6 +19,7 @@ import { RecipeCreateComponent } from './recipe-create/recipe-create.component';
 import { SharedModule } from '../shared/shared.module';
 import { PreparationTimePipe } from './preparation-time.pipe';
 import { RecipeDeleteDialogComponent } from './recipe-delete-dialog/recipe-delete-dialog.component';
+import { RecipeFormComponent } from './recipe-form/recipe-form.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { RecipeDeleteDialogComponent } from './recipe-delete-dialog/recipe-delet
     RecipeCreateComponent,
     PreparationTimePipe,
     RecipeDeleteDialogComponent,
+    RecipeFormComponent,
   ],
   imports: [
     CommonModule,

@@ -63,13 +63,26 @@ export class RecipesListComponent implements OnInit, OnDestroy {
         filter(
           (event): event is NavigationStart => event instanceof NavigationStart,
         ),
-        map(() => this._router.getCurrentNavigation()?.extras.state?.deletedId),
+        map(() => this._router.getCurrentNavigation()?.extras.state),
         filter(
-          (deletedId): deletedId is string => typeof deletedId === 'string',
+          (state): state is { [key: string]: unknown } =>
+            typeof state === 'object',
         ),
       )
-      .subscribe((deletedId) => {
-        this._deleteRecipe(deletedId);
+      .subscribe((state) => {
+        if (typeof state.deletedId === 'string') {
+          this._deleteRecipe(state.deletedId);
+        } else if (
+          typeof state.editedRecipe === 'object' &&
+          state.editedRecipe !== null
+        ) {
+          this._editRecipe(state.editedRecipe as Recipe);
+        } else if (
+          typeof state.newRecipe === 'object' &&
+          state.newRecipe !== null
+        ) {
+          this._createRecipe(state.newRecipe as Recipe);
+        }
       });
     this.filteredRecipes$ = combineLatest([
       this.filter.valueChanges.pipe(startWith('')),
@@ -126,5 +139,20 @@ export class RecipesListComponent implements OnInit, OnDestroy {
     this._recipesSubject.next(
       this._recipesSubject.value.filter(({ _id }) => _id !== id),
     );
+  }
+
+  private _editRecipe(recipe: Recipe): void {
+    const recipes = [...this._recipesSubject.value];
+    const recipeIndex = recipes.findIndex(({ _id }) => _id === recipe._id);
+
+    if (recipeIndex > -1) {
+      recipes[recipeIndex] = recipe;
+    }
+
+    this._recipesSubject.next(recipes);
+  }
+
+  private _createRecipe(recipe: Recipe): void {
+    this._recipesSubject.next([...this._recipesSubject.value, recipe]);
   }
 }

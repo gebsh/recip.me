@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { Recipe } from './recipe.model';
+import { NewRecipe, Recipe } from './recipe.model';
+
+type Writable<T> = {
+  -readonly [P in keyof T]: T[P];
+};
 
 // TODO: Move this to an API.
-const recipes: Recipe[] = [
+const recipes: Writable<Recipe>[] = [
   {
     _id: '1',
     name: 'Autumn Cheesecake',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris et nulla eget quam porttitor malesuada vitae vel nunc. Curabitur mattis dapibus ex eu vehicula. Phasellus dui neque, porta ut suscipit non, vulputate et libero. In lacinia ac lectus ac eleifend. Morbi aliquam lorem maximus, efficitur mi consectetur, bibendum massa. Fusce.',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     preparationTimeInMinutes: 4 * 60,
     ingredients: [
       { _id: '65', name: 'Eggs', quantity: '2' },
@@ -20,8 +23,7 @@ const recipes: Recipe[] = [
   {
     _id: '2',
     name: 'Autumn Cheesecake 2',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris et nulla eget quam porttitor malesuada vitae vel nunc. Curabitur mattis dapibus ex eu vehicula. Phasellus dui neque, porta ut suscipit non, vulputate et libero. In lacinia ac lectus ac eleifend. Morbi aliquam lorem maximus, efficitur mi consectetur, bibendum massa. Fusce.',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     preparationTimeInMinutes: 3 * 60,
     ingredients: [
       { _id: '65', name: 'Eggs', quantity: '2' },
@@ -32,8 +34,7 @@ const recipes: Recipe[] = [
   {
     _id: '3',
     name: 'Autumn Cheesecake 3',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris et nulla eget quam porttitor malesuada vitae vel nunc. Curabitur mattis dapibus ex eu vehicula. Phasellus dui neque, porta ut suscipit non, vulputate et libero. In lacinia ac lectus ac eleifend. Morbi aliquam lorem maximus, efficitur mi consectetur, bibendum massa. Fusce.',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     preparationTimeInMinutes: 3.5 * 60,
     ingredients: [
       { _id: '65', name: 'Eggs', quantity: '2' },
@@ -42,23 +43,49 @@ const recipes: Recipe[] = [
     ],
   },
 ];
+let nextId = 4;
+
+function clone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value));
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipeService {
   public getRecipes(): Observable<readonly Recipe[]> {
-    return of(recipes);
+    return of(clone(recipes));
   }
 
   public getRecipe(id: string): Observable<Recipe> {
     const recipe = recipes.find(({ _id }) => _id === id);
 
     if (recipe) {
-      return of(recipe);
+      return of(clone(recipe)).pipe(delay(1000));
     }
 
     return throwError(new Error(`Recipe with id ${id} does not exist`));
+  }
+
+  public createRecipe(recipe: NewRecipe): Observable<string> {
+    const id = String(nextId++);
+
+    recipes.push({
+      ...recipe,
+      _id: id,
+    });
+
+    return of(id).pipe(delay(1000));
+  }
+
+  public editRecipe(recipe: Recipe): Observable<undefined> {
+    const oldRecipeIndex = recipes.findIndex(({ _id }) => _id === recipe._id);
+
+    if (oldRecipeIndex > -1) {
+      recipes[oldRecipeIndex] = { ...recipe };
+    }
+
+    return of(undefined).pipe(delay(1000));
   }
 
   public deleteRecipe(id: string): Observable<undefined> {

@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Inject,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RecipeService } from '../recipe.service';
 

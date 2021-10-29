@@ -1,0 +1,126 @@
+<form
+  [attr.id]="formId !== undefined ? formId : null"
+  [formGroup]="recipeForm"
+  (ngSubmit)="processSubmit()"
+>
+  <section>
+    <header>
+      <h3>Recipe information</h3>
+    </header>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Name&nbsp;*</mat-label>
+      <input matInput type="text" inputmode="text" formControlName="name" />
+      <mat-error *ngIf="nameError as error" [ngSwitch]="error">
+        <ng-container *ngSwitchCase="'minLength'">
+          Name must consist of at least 3 characters.
+        </ng-container>
+        <ng-container *ngSwitchCase="'maxLength'">
+          Name must consist of at most 80 characters.
+        </ng-container>
+        <ng-container *ngSwitchCase="'required'">
+          Name is required.
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Description&nbsp;*</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+      <mat-error *ngIf="descriptionError as error" [ngSwitch]="error">
+        <ng-container *ngSwitchCase="'minLength'">
+          Description must consist of at least 15 characters.
+        </ng-container>
+        <ng-container *ngSwitchCase="'maxLength'">
+          Description must consist of at most 255 characters.
+        </ng-container>
+        <ng-container *ngSwitchCase="'required'">
+          Description is required.
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Preparation time&nbsp;*</mat-label>
+      <input
+        matInput
+        type="text"
+        inputmode="numeric"
+        formControlName="preparationTime"
+      />
+      <mat-hint> Time provided here is in minutes. </mat-hint>
+      <mat-error *ngIf="preparationTimeError as error" [ngSwitch]="error">
+        <ng-container *ngSwitchCase="'pattern'">
+          Preparation time must be a number and must be greater than or equal to
+          0.
+        </ng-container>
+        <ng-container *ngSwitchCase="'required'">
+          Preparation time is required.
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+  </section>
+
+  <section formArrayName="ingredients">
+    <header>
+      <h3>Ingredients</h3>
+      <span class="fill"></span>
+      <button mat-icon-button type="button" (click)="addIngredient()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </header>
+
+    <div
+      class="ingredient-row"
+      *ngFor="let ingredient of ingredients.controls; index as i"
+      [formGroupName]="i"
+    >
+      <mat-form-field appearance="fill">
+        <mat-label>Name&nbsp;*</mat-label>
+        <input matInput type="text" inputmode="text" formControlName="name" />
+        <mat-error
+          *ngIf="ingredientControl(i)!.get('name')!.hasError('required')"
+        >
+          Name is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Quantity&nbsp;*</mat-label>
+        <input
+          matInput
+          type="text"
+          inputmode="text"
+          formControlName="quantity"
+        />
+        <mat-error
+          *ngIf="ingredientControl(i)!.get('quantity')!.hasError('required')"
+        >
+          Quantity is required.
+        </mat-error>
+      </mat-form-field>
+
+      <button
+        mat-icon-button
+        class="delete"
+        type="button"
+        (click)="removeIngredient(i)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+
+    <mat-error
+      class="ingredients-error"
+      *ngIf="ingredientsError as error"
+      [ngSwitch]="error"
+    >
+      <ng-container *ngSwitchCase="'minLength'">
+        Recipe must contain at least two ingredients.
+      </ng-container>
+      <ng-container *ngSwitchCase="'required'">
+        Ingredients are required.
+      </ng-container>
+    </mat-error>
+  </section>
+</form>

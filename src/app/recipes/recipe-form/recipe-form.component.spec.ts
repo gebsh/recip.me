@@ -1,28 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '@angular/router/testing';
-import { RecipeFormComponent } from '../recipe-form/recipe-form.component';
-import { RecipeCreateComponent } from './recipe-create.component';
+import { RecipeFormComponent } from './recipe-form.component';
 
-describe('RecipeCreateComponent', () => {
-  let fixture: ComponentFixture<RecipeCreateComponent>;
-  let component: RecipeCreateComponent;
+describe('RecipeFormComponent', () => {
+  let fixture: ComponentFixture<RecipeFormComponent>;
+  let component: RecipeFormComponent;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RecipeCreateComponent, RecipeFormComponent],
+      declarations: [RecipeFormComponent],
       imports: [
-        RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
         NoopAnimationsModule,
-        MatCardModule,
-        MatDividerModule,
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
@@ -31,7 +24,7 @@ describe('RecipeCreateComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RecipeCreateComponent);
+    fixture = TestBed.createComponent(RecipeFormComponent);
     component = fixture.componentInstance;
 
     fixture.detectChanges();
