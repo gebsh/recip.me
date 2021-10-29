@@ -1,0 +1,30 @@
+:host {
+  height: 100%;
+  display: flex;
+  flex-flow: row;
+}
+
+header {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 16px 16px 0;
+
+  > h2 {
+    margin: 0;
+  }
+
+  > .fill {
+    flex: 1 1 auto;
+  }
+}
+
+.list-section {
+  flex-basis: 33%;
+}
+
+.details-section {
+  flex-basis: 67%;
+}

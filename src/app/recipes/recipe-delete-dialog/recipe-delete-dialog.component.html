@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Delete recipe</h2>
+<mat-dialog-content>
+  <p>
+    Do you want to remove the recipe <q>{{ data.name }}</q
+    >?
+  </p>
+  <p class="error" *ngIf="error !== undefined">
+    An error occurred while deleting this recipe: {{ error }}
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="false" [disabled]="processing">
+    Cancel
+  </button>
+  <button
+    mat-button
+    color="warn"
+    cdkFocusInitial
+    [disabled]="processing"
+    (click)="deleteRecipe()"
+  >
+    Delete
+    <mat-icon *ngIf="processing">
+      <mat-spinner color="warn" [diameter]="20"></mat-spinner>
+    </mat-icon>
+  </button>
+</mat-dialog-actions>

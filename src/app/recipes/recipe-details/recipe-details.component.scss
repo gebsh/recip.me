@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  padding: 16px;
+}
+
+.list-element {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  padding: 16px 0;
+
+  & > dt {
+    flex-basis: 40%;
+    padding-right: 8px;
+  }
+
+  & > dd {
+    flex-basis: 60%;
+    margin-left: 0;
+  }
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style-position: inside;
+}
+
+.error {
+  color: #f44336;
+}

@@ -1,0 +1,33 @@
+<ng-container>
+  <div class="search">
+    <mat-form-field class="search-input" appearance="fill">
+      <mat-label>Search recipes</mat-label>
+      <input matInput type="search" [formControl]="filter" />
+    </mat-form-field>
+  </div>
+
+  <mat-nav-list *ngIf="filteredRecipes$ | async as recipes">
+    <mat-list-item
+      *ngFor="let recipe of recipes; last as last; trackBy: recipeTrackBy"
+      [disableRipple]=""
+      (click)="openDetails(recipe._id)"
+    >
+      <span matLine>{{ recipe.name }}</span>
+      <button
+        mat-icon-button
+        appStopRipplePropagation
+        (click)="editRecipe($event, recipe._id)"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        appStopRipplePropagation
+        (click)="deleteRecipe($event, recipe._id, recipe.name)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+      <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
+    </mat-list-item>
+  </mat-nav-list>
+</ng-container>

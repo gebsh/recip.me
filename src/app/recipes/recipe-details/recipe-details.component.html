@@ -1,0 +1,59 @@
+<mat-card>
+  <mat-card-title>Recipe details</mat-card-title>
+  <ng-container *ngIf="recipe$ | async as recipe; else loadingOrError">
+    <mat-card-content>
+      <dl>
+        <div class="list-element">
+          <dt class="mat-body-2">Name</dt>
+          <dd>{{ recipe.name }}</dd>
+        </div>
+        <div class="list-element">
+          <dt class="mat-body-2">Description</dt>
+          <dd>{{ recipe.description }}</dd>
+        </div>
+        <div class="list-element">
+          <dt class="mat-body-2">Preparation time</dt>
+          <dd>{{ recipe.preparationTimeInMinutes | preparationTime }}</dd>
+        </div>
+        <div class="list-element">
+          <dt class="mat-body-2">Ingredients</dt>
+          <dd>
+            <ul>
+              <li
+                *ngFor="
+                  let ingredient of recipe.ingredients;
+                  trackBy: ingredientTrackBy
+                "
+              >
+                {{ ingredient.name }}: {{ ingredient.quantity }}
+              </li>
+            </ul>
+          </dd>
+        </div>
+      </dl>
+    </mat-card-content>
+    <mat-divider></mat-divider>
+    <mat-card-actions align="end">
+      <a mat-button [routerLink]="['../../edit', recipe._id]">Edit</a>
+      <button
+        mat-button
+        (click)="deleteRecipe($event, recipe._id, recipe.name)"
+      >
+        Delete
+      </button>
+    </mat-card-actions>
+  </ng-container>
+  <ng-template #loadingOrError>
+    <ng-container *ngIf="error; else loading">
+      <mat-card-content class="error">
+        <p>An error occurred while fetching the recipe:<br />{{ error }}</p>
+      </mat-card-content>
+    </ng-container>
+    <ng-template #loading>
+      <mat-card-content>Loading recipe details...</mat-card-content>
+      <mat-card-footer>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </mat-card-footer>
+    </ng-template>
+  </ng-template>
+</mat-card>
