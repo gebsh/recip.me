@@ -29,15 +29,16 @@ export class RecipeCreateComponent {
     this.processing = true;
 
     this._recipeService.createRecipe(recipe).subscribe(
-      (id) => {
-        this._router.navigate(['../details', id], {
+      (recipe) => {
+        this._router.navigate(['../details', recipe._id], {
           relativeTo: this._route,
           state: {
-            newRecipe: { ...recipe, _id: id },
+            newRecipe: recipe,
           },
         });
       },
       (error) => {
+        this.processing = false;
         this.processError = String(error);
       },
       () => {

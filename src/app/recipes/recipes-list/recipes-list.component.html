@@ -5,7 +5,6 @@
       <input matInput type="search" inputmode="search" [formControl]="filter" />
     </mat-form-field>
   </div>
-
   <mat-nav-list *ngIf="filteredRecipes$ | async as recipes">
     <mat-list-item
       *ngFor="let recipe of recipes; last as last; trackBy: recipeTrackBy"
@@ -32,4 +31,10 @@
       <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
     </mat-list-item>
   </mat-nav-list>
+  <p *ngIf="fetchError" class="error">
+    An error occurred while loading the recipe:<br />{{ fetchError }}
+  </p>
+  <div class="process-spinner">
+    <mat-spinner *ngIf="processing"></mat-spinner>
+  </div>
 </ng-container>

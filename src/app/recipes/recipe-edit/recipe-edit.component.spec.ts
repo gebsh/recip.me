@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RecipeFormComponent } from '../recipe-form/recipe-form.component';
+import { RecipeService } from '../recipe.service';
 import { RecipeEditComponent } from './recipe-edit.component';
 
 describe('RecipeEditComponent', () => {
@@ -27,6 +28,7 @@ describe('RecipeEditComponent', () => {
         MatIconModule,
         MatInputModule,
       ],
+      providers: [{ provide: RecipeService, useValue: {} }],
     }).compileComponents();
   });
 

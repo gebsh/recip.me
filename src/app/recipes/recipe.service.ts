@@ -1,100 +1,76 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { API_URL } from '../api';
 import { NewRecipe, Recipe } from './recipe.model';
-
-type Writable<T> = {
-  -readonly [P in keyof T]: T[P];
-};
-
-// TODO: Move this to an API.
-const recipes: Writable<Recipe>[] = [
-  {
-    _id: '1',
-    name: 'Autumn Cheesecake',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    preparationTimeInMinutes: 4 * 60,
-    ingredients: [
-      { _id: '65', name: 'Eggs', quantity: '2' },
-      { _id: '66', name: 'White sugar', quantity: '3 tablespoons' },
-      { _id: '67', name: 'Vanilla extract', quantity: '½ teaspoon' },
-    ],
-  },
-  {
-    _id: '2',
-    name: 'Autumn Cheesecake 2',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    preparationTimeInMinutes: 3 * 60,
-    ingredients: [
-      { _id: '65', name: 'Eggs', quantity: '2' },
-      { _id: '66', name: 'White sugar', quantity: '3 tablespoons' },
-      { _id: '67', name: 'Vanilla extract', quantity: '½ teaspoon' },
-    ],
-  },
-  {
-    _id: '3',
-    name: 'Autumn Cheesecake 3',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    preparationTimeInMinutes: 3.5 * 60,
-    ingredients: [
-      { _id: '65', name: 'Eggs', quantity: '2' },
-      { _id: '66', name: 'White sugar', quantity: '3 tablespoons' },
-      { _id: '67', name: 'Vanilla extract', quantity: '½ teaspoon' },
-    ],
-  },
-];
-let nextId = 4;
-
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
-}
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipeService {
+  private readonly _resource: string = 'recipe';
+
+  constructor(
+    @Inject(API_URL) private readonly _url: string,
+    private readonly _http: HttpClient,
+  ) {}
+
   public getRecipes(): Observable<readonly Recipe[]> {
-    return of(clone(recipes));
+    return this._http
+      .get<readonly Recipe[]>(`${this._url}/${this._resource}`)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          return throwError(
+            `An error occurred while fetching recipes: ${error.error}`,
+          );
+        }),
+      );
   }
 
   public getRecipe(id: string): Observable<Recipe> {
-    const recipe = recipes.find(({ _id }) => _id === id);
-
-    if (recipe) {
-      return of(clone(recipe)).pipe(delay(1000));
-    }
-
-    return throwError(new Error(`Recipe with id ${id} does not exist`));
+    return this._http.get<Recipe>(`${this._url}/${this._resource}/${id}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(
+          `An error occurred while fetching the recipe ${id}: ${error.error}`,
+        );
+      }),
+    );
   }
 
-  public createRecipe(recipe: NewRecipe): Observable<string> {
-    const id = String(nextId++);
-
-    recipes.push({
-      ...recipe,
-      _id: id,
-    });
-
-    return of(id).pipe(delay(1000));
+  public createRecipe(recipe: NewRecipe): Observable<Recipe> {
+    return this._http
+      .post<Recipe>(`${this._url}/${this._resource}`, recipe)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          return throwError(
+            `An error occurred while creating a new recipe: ${error.error}`,
+          );
+        }),
+      );
   }
 
-  public editRecipe(recipe: Recipe): Observable<undefined> {
-    const oldRecipeIndex = recipes.findIndex(({ _id }) => _id === recipe._id);
+  public editRecipe(recipe: Recipe): Observable<{}> {
+    const { _id, ...editedRecipe } = recipe;
 
-    if (oldRecipeIndex > -1) {
-      recipes[oldRecipeIndex] = { ...recipe };
-    }
-
-    return of(undefined).pipe(delay(1000));
+    return this._http
+      .put<Recipe>(`${this._url}/${this._resource}/${_id}`, editedRecipe)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          return throwError(
+            `An error occurred while editing the recipe ${_id}: ${error.error}`,
+          );
+        }),
+      );
   }
 
-  public deleteRecipe(id: string): Observable<undefined> {
-    const index = recipes.findIndex(({ _id }) => _id === id);
-
-    if (index > -1) {
-      recipes.splice(index, 1);
-    }
-
-    return of(undefined);
+  public deleteRecipe(id: string): Observable<{}> {
+    return this._http.delete(`${this._url}/${this._resource}/${id}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(
+          `An error occurred while deleting the recipe ${id}: ${error.error}`,
+        );
+      }),
+    );
   }
 }

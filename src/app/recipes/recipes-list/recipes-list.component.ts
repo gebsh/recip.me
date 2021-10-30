@@ -3,17 +3,13 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   OnDestroy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  ActivatedRoute,
-  ActivationEnd,
-  NavigationStart,
-  Router,
-} from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { filter, map, startWith, tap } from 'rxjs/operators';
+import { filter, map, startWith } from 'rxjs/operators';
 import {
   RecipeDeleteDialogComponent,
   RecipeDeleteDialogData,
@@ -43,10 +39,13 @@ function filterRecipes(
 export class RecipesListComponent implements OnInit, OnDestroy {
   public filter = new FormControl('');
   public filteredRecipes$?: Observable<readonly Recipe[]>;
+  public processing: boolean = false;
+  public fetchError?: string;
   private _routerSubscription?: Subscription;
   private readonly _recipesSubject = new BehaviorSubject<readonly Recipe[]>([]);
 
   constructor(
+    private readonly _cd: ChangeDetectorRef,
     private readonly _route: ActivatedRoute,
     private readonly _router: Router,
     private readonly _dialog: MatDialog,
@@ -54,9 +53,24 @@ export class RecipesListComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
-    this._recipeService.getRecipes().subscribe((recipes) => {
-      this._recipesSubject.next(recipes);
-    });
+    this.processing = true;
+    this.fetchError = undefined;
+
+    this._cd.markForCheck();
+    this._recipeService.getRecipes().subscribe(
+      (recipes) => {
+        this._recipesSubject.next(recipes);
+      },
+      (error) => {
+        this.processing = false;
+        this.fetchError = String(error);
+        this._cd.markForCheck();
+      },
+      () => {
+        this.processing = false;
+        this._cd.markForCheck();
+      },
+    );
 
     this._routerSubscription = this._router.events
       .pipe(

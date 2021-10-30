@@ -76,6 +76,7 @@ export class RecipeEditComponent implements OnInit {
         });
       },
       (error) => {
+        this.processing = false;
         this.processError = String(error);
       },
       () => {
